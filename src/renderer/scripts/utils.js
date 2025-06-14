@@ -1,4 +1,4 @@
-const { shell, ipcRenderer } = require('electron');
+
 const Store = require('electron-store');
 
 // 初始化存储

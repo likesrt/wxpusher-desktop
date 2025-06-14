@@ -13,3 +13,4 @@ dist/
 *.dll
 *.exe
 node_modules/
+out/
