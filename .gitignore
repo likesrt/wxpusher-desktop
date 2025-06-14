@@ -12,3 +12,4 @@ build/
 dist/
 *.dll
 *.exe
+node_modules/
