@@ -17,10 +17,10 @@
     "files": [
       "**/*"
     ],
-    "icon": "wxpusher_32x32.ico",
+    "icon": "wxpusher_256x256.ico",
     "win": {
       "target": ["nsis", "portable"],
-      "icon": "wxpusher_32x32.ico"
+      "icon": "wxpusher_256x256.ico"
     }
   },
   "devDependencies": {
