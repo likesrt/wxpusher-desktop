@@ -2,8 +2,8 @@ name: Build & Release Windows EXE
 
 on:
   push:
-    tags:
-      - 'v*.*.*' # 仅推送以 v开头的tag时触发，例如 v1.0.0
+    branches: [ main ] # 或者您的主分支名称，如master
+  workflow_dispatch: # 允许手动触发工作流
 
 jobs:
   build:
