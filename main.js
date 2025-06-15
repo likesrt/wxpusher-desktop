@@ -91,7 +91,6 @@ function createMenu() {
         { type: 'separator' },
         {
           label: '退出',
-          accelerator: 'CmdOrCtrl+Q',
           click: () => {
             allowQuit = true;
             app.quit();
@@ -136,10 +135,7 @@ function createMenu() {
     {
       label: '窗口',
       submenu: [
-        { role: 'minimize', label: '最小化' },
-        { role: 'zoom', label: '缩放' },
-        { type: 'separator' },
-        { role: 'togglefullscreen', label: '全屏' }
+        { role: 'minimize', label: '最小化' }
       ]
     },
     {
@@ -163,7 +159,11 @@ function createMenu() {
         {
           label: '关于',
           click: showAboutDialog
-        }
+        },
+        {
+          label: '作者',
+          click: () => shell.openExternal('https://likesrt.com')
+        },
       ]
     }
   ];
@@ -260,8 +260,7 @@ function showAboutDialog() {
     type: 'info',
     title: '关于',
     message: `${APP_NAME} v${app.getVersion()}`,
-    detail: '基于 Electron 的 WxPusher 微信推送客户端\n\n' +
-      '© 2024 WxPusher. All rights reserved.',
+    detail: '基于 Electron 的 WxPusher 微信推送客户端\n\n',
     buttons: ['确定']
   });
 }
