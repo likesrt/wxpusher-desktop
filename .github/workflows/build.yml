@@ -1,0 +1,75 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main  # 或者你的主分支名，如 master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 获取完整的历史记录用于版本计算
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'npm'
+
+      - name: Get package version
+        id: package_version
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Create Tag
+        id: create_tag
+        run: |
+          git tag v${{ steps.package_version.outputs.version }}
+          git push origin v${{ steps.package_version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build application
+        run: npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          tag_name: v${{ steps.package_version.outputs.version }}
+          name: Release v${{ steps.package_version.outputs.version }}
+          draft: false
+          prerelease: false
+          body: |
+            WxPusher Desktop v${{ steps.package_version.outputs.version }}
+            
+            **自动构建发布**
+            
+            构建时间: ${{ steps.package_version.outputs.version }}
+            
+          files: |
+            dist/*.exe
+            dist/*.zip
+            dist/*.yml
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: wxpusher-desktop-win
+          path: |
+            dist/*.exe
+            dist/*.zip
+            dist/*.yml
