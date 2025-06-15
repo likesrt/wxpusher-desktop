@@ -1,7 +1,9 @@
-name: Build and Release EXE
+name: Build & Release Windows EXE
 
 on:
   push:
+    tags:
+      - 'v*.*.*' # 仅推送以 v开头的tag时触发，例如 v1.0.0
 
 jobs:
   build:
@@ -11,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Use Node.js 18
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -19,31 +21,32 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build app
-        run: npm run dist
+      - name: Build with electron-builder
+        run: npx electron-builder --win --x64
 
-      - name: Upload exe installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: exe-installer
-          path: dist/*.exe
+      - name: Get release version
+        id: get_version
+        run: |
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download exe artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: exe-installer
-          path: release
-
-      - name: Set GH_TOKEN env
-        run: echo "GH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
-
-      - name: Create Release
+      - name: Create GitHub Release
+        id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          files: release/*.exe
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ env.VERSION }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload EXE to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            dist/*.exe
+            dist/*.msi
+            dist/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
