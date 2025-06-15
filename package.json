@@ -1,23 +1,34 @@
 {
   "name": "wxpusher-desktop",
   "version": "1.0.0",
-  "description": "WxPusher Desktop Client",
-  "main": "src/main/main.js",
+  "main": "main.js",
+  "description": "WxPusher 微信推送 Electron 桌面版",
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
-  "dependencies": {
-    "electron-squirrel-startup": "^1.0.0",
-    "electron-store": "^8.1.0"
+  "build": {
+    "appId": "com.wxpusher.desktop",
+    "productName": "WxPusher 微信推送",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*"
+    ],
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "mac": {
+      "target": ["dmg"]
+    },
+    "linux": {
+      "target": ["AppImage"]
+    }
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.2.0",
-    "@electron-forge/maker-deb": "^7.2.0",
-    "@electron-forge/maker-rpm": "^7.2.0",
-    "@electron-forge/maker-squirrel": "^7.2.0",
-    "@electron-forge/maker-zip": "^7.2.0",
-    "electron": "^28.0.0"
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
   }
 }
