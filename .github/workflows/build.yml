@@ -38,6 +38,9 @@ jobs:
           name: exe-installer
           path: release
 
+      - name: Set GH_TOKEN env
+        run: echo "GH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
