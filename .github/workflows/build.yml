@@ -2,8 +2,8 @@ name: Build and Release
 
 on:
   push:
-    branches:
-      - main  # 或者你的主分支名，如 master
+    branches: [ main ] # 或者您的主分支名称，如master
+  workflow_dispatch: # 允许手动触发工作流
 
 jobs:
   build:
@@ -34,15 +34,7 @@ jobs:
           git push origin v${{ steps.package_version.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build application
-        run: npm run dist
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
+          
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -63,7 +55,16 @@ jobs:
           files: |
             dist/*.exe
             dist/*.zip
-            dist/*.yml
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build application
+        run: npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4  # 更新到 v4
