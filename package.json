@@ -1,6 +1,6 @@
 {
   "name": "wxpusher-desktop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "main.js",
   "description": "WxPusher 微信推送 Electron 桌面版",
   "scripts": {
@@ -17,14 +17,10 @@
     "files": [
       "**/*"
     ],
+    "icon": "wxpusher_32x32.ico",
     "win": {
-      "target": ["nsis", "portable"]
-    },
-    "mac": {
-      "target": ["dmg"]
-    },
-    "linux": {
-      "target": ["AppImage"]
+      "target": ["nsis", "portable"],
+      "icon": "wxpusher_32x32.ico"
     }
   },
   "devDependencies": {

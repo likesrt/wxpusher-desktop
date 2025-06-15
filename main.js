@@ -1,5 +1,6 @@
-const { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain } = require('electron');
+const { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain, shell, dialog } = require('electron');
 const path = require('path');
+const pkg = require('./package.json');
 
 // 全局变量
 let mainWindow = null;
@@ -14,29 +15,155 @@ let isAutoLaunch = false;
 // 图标路径
 const ICON_PATH = path.join(__dirname, 'wxpusher_32x32.ico');
 
+// =========== 应用菜单创建 ===========
+function createMenu() {
+  const template = [
+    {
+      label: '文件',
+      submenu: [
+        {
+          label: '刷新',
+          accelerator: 'CmdOrCtrl+R',
+          click: () => mainWindow?.reload()
+        },
+        { type: 'separator' },
+        {
+          label: '退出',
+          accelerator: 'CmdOrCtrl+Q',
+          click: () => {
+            allowQuit = true;
+            app.quit();
+          }
+        }
+      ]
+    },
+    {
+      label: '设置',
+      submenu: [
+        {
+          label: '开机启动',
+          type: 'checkbox',
+          checked: app.getLoginItemSettings().openAtLogin,
+          click: (item) => {
+            setAutoLaunch(item.checked);
+          }
+        },
+        {
+          label: '声音提醒',
+          type: 'checkbox',
+          checked: true,
+          click: (item) => {
+            isSoundEnabled = item.checked;
+            mainWindow?.webContents.send('toggle-sound', item.checked);
+          }
+        },
+        {
+          label: '桌面通知',
+          type: 'checkbox',
+          checked: true,
+          click: (item) => {
+            isNotificationEnabled = item.checked;
+            mainWindow?.webContents.send('toggle-notification', item.checked);
+          }
+        },
+        { type: 'separator' },
+        {
+          label: '清除缓存',
+          click: async () => {
+            const choice = await dialog.showMessageBox(mainWindow, {
+              type: 'question',
+              buttons: ['确定', '取消'],
+              title: '确认',
+              message: '确定要清除所有缓存数据吗？这将清除登录状态等信息。'
+            });
+            if (choice.response === 0) {
+              mainWindow?.webContents.session.clearStorageData();
+              mainWindow?.reload();
+            }
+          }
+        }
+      ]
+    },
+    {
+      label: '窗口',
+      submenu: [
+        { role: 'minimize', label: '最小化' },
+        { type: 'separator' },
+        { role: 'togglefullscreen', label: '全屏' }
+      ]
+    },
+    {
+      label: '帮助',
+      submenu: [
+        {
+          label: 'wxpusher官方网站',
+          click: () => {
+            shell.openExternal('https://wxpusher.zjiecode.com');
+          }
+        },
+        {
+          label: 'wxpusher使用文档',
+          click: () => {
+            shell.openExternal('https://wxpusher.zjiecode.com/docs/');
+          }
+        },
+        { type: 'separator' },
+        {
+          label: '开发者工具',
+          accelerator: 'CmdOrCtrl+Shift+I',
+          click: () => mainWindow?.webContents.toggleDevTools()
+        },
+        { type: 'separator' },
+        {
+          label: '关于',
+          click: () => {
+            dialog.showMessageBox(mainWindow, {
+              type: 'info',
+              title: '关于',
+              message: `${app.getName()} v${app.getVersion()}`,
+              detail: '基于 Electron 的 WxPusher 微信推送桌面客户端\n\n作者:yuyan \n'
+            });
+          }
+        },
+        {
+          label: '作者',
+          click: () => {
+            shell.openExternal('https://blog.likesrt.com/archives');
+          }
+        }
+      ]
+    }
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
+
 // =========== 主窗口创建 ===========
 function createMainWindow() {
+  // 创建浏览器窗口
   mainWindow = new BrowserWindow({
     width: 900,
     height: 700,
+    minWidth: 800,
+    minHeight: 600,
     title: 'WxPusher 微信推送',
     icon: ICON_PATH,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
-      contextIsolation: true
+      contextIsolation: true,
+      spellcheck: false
     }
   });
 
+  // 加载页面
   mainWindow.loadFile('index.html');
-  mainWindow.setMenuBarVisibility(false);
+  
+  // 创建菜单
+  createMenu();
 
-  // 捕获 window.open 并自定义新窗口
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    createChildWindow(url);
-    return { action: 'deny' }; // 阻止默认弹窗
-  });
-
+  // 处理窗口关闭事件
   mainWindow.on('close', (e) => {
     if (!allowQuit) {
       e.preventDefault();
@@ -44,27 +171,18 @@ function createMainWindow() {
     }
   });
 
+  // 处理窗口最小化事件
   mainWindow.on('minimize', (e) => {
+    if (process.platform === 'darwin') return; // macOS 不处理
     e.preventDefault();
     mainWindow.hide();
   });
-}
 
-// =========== 弹窗/二级页面 ===========
-function createChildWindow(url) {
-  const child = new BrowserWindow({
-    parent: mainWindow,
-    width: 800,
-    height: 600,
-    icon: ICON_PATH,
-    show: true,
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true
-    }
+  // 处理新窗口打开
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
   });
-  child.setMenuBarVisibility(false);
-  child.loadURL(url);
 }
 
 // =========== 托盘相关 ===========
@@ -77,17 +195,18 @@ function createTray() {
 }
 
 function updateTrayMenu() {
-  const menu = Menu.buildFromTemplate([
-    { label: '显示主界面', click: showMainWindow },
+  const contextMenu = Menu.buildFromTemplate([
+    { 
+      label: '显示主界面', 
+      click: showMainWindow 
+    },
     { type: 'separator' },
     {
       label: '开机启动',
       type: 'checkbox',
       checked: isAutoLaunch,
       click: (item) => {
-        isAutoLaunch = item.checked;
-        setAutoLaunch(isAutoLaunch);
-        updateTrayMenu();
+        setAutoLaunch(item.checked);
       }
     },
     {
@@ -96,8 +215,7 @@ function updateTrayMenu() {
       checked: isSoundEnabled,
       click: (item) => {
         isSoundEnabled = item.checked;
-        mainWindow?.webContents.send('set-sound-enabled', isSoundEnabled);
-        updateTrayMenu();
+        mainWindow?.webContents.send('toggle-sound', item.checked);
       }
     },
     {
@@ -106,62 +224,113 @@ function updateTrayMenu() {
       checked: isNotificationEnabled,
       click: (item) => {
         isNotificationEnabled = item.checked;
-        mainWindow?.webContents.send('set-notification-enabled', isNotificationEnabled);
-        updateTrayMenu();
+        mainWindow?.webContents.send('toggle-notification', item.checked);
       }
     },
     { type: 'separator' },
     {
-      label: '退出', click: () => {
+      label: '退出',
+      click: () => {
         allowQuit = true;
         app.quit();
       }
     }
   ]);
-  tray.setContextMenu(menu);
+
+  tray.setContextMenu(contextMenu);
 }
 
+// =========== 工具函数 ===========
 function showMainWindow() {
-  if (mainWindow) {
+  if (!mainWindow) {
+    createMainWindow();
+  } else {
     mainWindow.show();
     mainWindow.focus();
   }
 }
 
 function setAutoLaunch(enable) {
+  isAutoLaunch = enable;
   app.setLoginItemSettings({
     openAtLogin: enable,
-    openAsHidden: false
+    openAsHidden: true
   });
+  updateTrayMenu();
 }
 
-// =========== 渲染进程通信 ===========
-ipcMain.on('setting-changed', (event, { key, value }) => {
-  if (key === 'soundEnabled') {
-    isSoundEnabled = !!value;
-    updateTrayMenu();
-  }
-  if (key === 'notificationEnabled') {
-    isNotificationEnabled = !!value;
-    updateTrayMenu();
-  }
+// =========== IPC 通信 ===========
+ipcMain.on('login-success', () => {
+  mainWindow?.reload();
 });
 
-ipcMain.handle('get-settings', () => ({
-  soundEnabled: isSoundEnabled,
-  notificationEnabled: isNotificationEnabled
-}));
+ipcMain.on('setting-changed', (event, { key, value }) => {
+  switch (key) {
+    case 'soundEnabled':
+      isSoundEnabled = value;
+      break;
+    case 'notificationEnabled':
+      isNotificationEnabled = value;
+      break;
+  }
+  updateTrayMenu();
+});
 
 // =========== 应用生命周期 ===========
 app.whenReady().then(() => {
+  // 读取开机启动设置
   isAutoLaunch = app.getLoginItemSettings().openAtLogin;
+  
+  // 创建窗口和托盘
   createMainWindow();
   createTray();
+  
+  // macOS 激活时重建窗口
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createMainWindow();
+    }
+  });
+  
+  // 首次启动时如果是开机启动，则隐藏窗口
+  if (process.argv.includes('--hidden')) {
+    mainWindow?.hide();
+  }
 });
 
+// 所有窗口关闭时的处理
 app.on('window-all-closed', () => {
-  // 不退出，保持托盘驻留
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
-app.on('activate', showMainWindow);
+// 应用退出前的清理
+app.on('before-quit', () => {
+  allowQuit = true;
+});
 
+// 防止多开
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+}
+
+// 开发环境下的错误处理
+if (process.env.NODE_ENV === 'development') {
+  process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    dialog.showErrorBox(
+      '错误',
+      `发生未捕获的错误:\n${error.message}\n\n${error.stack}`
+    );
+  });
+}

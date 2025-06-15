@@ -1,8 +1,16 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  onSetSoundEnabled: (cb) => ipcRenderer.on('set-sound-enabled', (event, val) => cb(val)),
-  onSetNotificationEnabled: (cb) => ipcRenderer.on('set-notification-enabled', (event, val) => cb(val)),
-  settingChanged: (key, value) => ipcRenderer.send('setting-changed', { key, value }),
-  getSettings: () => ipcRenderer.invoke('get-settings')
+contextBridge.exposeInMainWorld('electron', {
+  send: (channel, data) => {
+    let validChannels = ['login-success']; // 允许的通信频道
+    if (validChannels.includes(channel)) {
+      ipcRenderer.send(channel, data);
+    }
+  },
+  receive: (channel, func) => {
+    let validChannels = ['toggle-sound', 'toggle-notification'];
+    if (validChannels.includes(channel)) {
+      ipcRenderer.on(channel, (event, ...args) => func(...args));
+    }
+  }
 });
