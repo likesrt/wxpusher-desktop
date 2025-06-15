@@ -32,6 +32,16 @@ jobs:
           git push origin v${{ steps.package_version.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build application
+        run: npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
           
       - name: Create Release
         id: create_release
@@ -54,16 +64,6 @@ jobs:
             dist/*.exe
             dist/*.zip
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build application
-        run: npm run dist
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4  # 更新到 v4
         with:
@@ -71,6 +71,5 @@ jobs:
           path: |
             dist/*.exe
             dist/*.zip
-            dist/*.yml
           compression-level: 0  
           retention-days: 90 
