@@ -3,6 +3,9 @@
 > 基于 Electron 的 WxPusher 消息推送客户端，支持扫码登录、消息提醒、桌面通知、托盘驻留等功能。
 
 ---
+![PixPin_2025-06-15_22-09-16](https://github.com/user-attachments/assets/4acafa93-7302-489d-90fd-34dd93b96651)
+![PixPin_2025-06-15_22-09-51](https://github.com/user-attachments/assets/75f41498-49c5-40f2-86ad-b46dfbc1d809)
+
 
 ## 功能简介
 
@@ -16,7 +19,7 @@
 
 ## 运行环境
 
-- Node.js 18+
+- Node.js 20+
 - Windows
 
 ---
