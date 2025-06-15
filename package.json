@@ -10,7 +10,7 @@
   },
   "build": {
     "appId": "com.wxpusher.desktop",
-    "productName": "WxPusher 微信推送",
+    "productName": "WxPusher-Desktop",
     "directories": {
       "output": "dist"
     },

@@ -15,6 +15,8 @@ let isAutoLaunch = false;
 const APP_NAME = 'WxPusher 微信推送';
 const ICON_PATH = path.join(__dirname, 'wxpusher_32x32.ico');
 const ICON_PATH_256 = path.join(__dirname, 'wxpusher_256x256.ico');
+// 设置应用 ID
+app.setAppUserModelId('WxPusher-Desktop');
 
 // =========== 窗口创建 ===========
 function createMainWindow() {

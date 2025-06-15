@@ -454,10 +454,11 @@
         const notification = {
             show(title, options = {}, qid = null) {
                 const n = new Notification(title, {
-                    icon: 'wxpusher_32x32.ico',
-                    badge: 'wxpusher_32x32.ico',
-                    ...options
-                });
+                        icon: 'wxpusher_32x32.ico',
+                        badge: 'wxpusher_32x32.ico',
+                        appName: 'WxPusher', // 设置应用名称
+                        ...options
+                    });
                 n.onclick = function () {
                     if (qid) {
                         window.open(`https://wxpusher.zjiecode.com/api/message/${qid}`, '_blank');
