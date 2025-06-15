@@ -11,14 +11,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # 也更新到 v4
         with:
-          fetch-depth: 0 # 获取完整的历史记录用于版本计算
+          fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4  # 更新到 v4
         with:
-          node-version: '16'
+          node-version: '20'
           cache: 'npm'
 
       - name: Get package version
@@ -66,10 +66,12 @@ jobs:
             dist/*.yml
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # 更新到 v4
         with:
           name: wxpusher-desktop-win
           path: |
             dist/*.exe
             dist/*.zip
             dist/*.yml
+          compression-level: 0  
+          retention-days: 90 
