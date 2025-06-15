@@ -1,6 +1,6 @@
 module.exports = {
   packagerConfig: {
-    icon: './src/assets/wxpusher' // 不带.ico
+    icon: './src/assets/wxpusher_32x32' // 不带.ico
   },
   rebuildConfig: {},
   makers: [
@@ -8,7 +8,7 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         // iconUrl: 'https://yourdomain.com/path/to/wxpusher.ico', // 建议用公网链接，或暂时注释掉
-        setupIcon: './src/assets/wxpusher.ico'
+        setupIcon: './src/assets/wxpusher_32x32.ico'
       }
     },
     {

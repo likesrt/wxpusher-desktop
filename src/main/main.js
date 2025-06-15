@@ -20,7 +20,7 @@ function createWindow() {
       enableRemoteModule: true,
       webSecurity: false
     },
-    icon: path.join(__dirname, '../assets/wxpusher.ico')
+    icon: path.join(__dirname, '../assets/wxpusher_32x32.ico')
   });
 
   mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
@@ -41,7 +41,7 @@ function createWindow() {
 
 // 创建系统托盘
 function createTray() {
-  const icon = nativeImage.createFromPath(path.join(__dirname, '../assets/wxpusher.ico'));
+  const icon = nativeImage.createFromPath(path.join(__dirname, '../assets/wxpusher_32x32.ico'));
   tray = new Tray(icon);
 
   const contextMenu = Menu.buildFromTemplate([
@@ -96,7 +96,7 @@ function showNotification(title, body) {
     const notification = new Notification({
       title,
       body,
-      icon: path.join(__dirname, '../assets/wxpusher.ico')
+      icon: path.join(__dirname, '../assets/wxpusher_32x32.ico')
     });
     notification.show();
     
