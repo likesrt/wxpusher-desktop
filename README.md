@@ -24,25 +24,6 @@
 
 ---
 
-##  技术架构
-
-### 主进程模块化
-- **WindowManager** - 窗口生命周期管理
-- **TrayManager** - 系统托盘功能
-- **MenuManager** - 应用菜单管理
-- **SettingsManager** - 设置存储与同步
-- **IpcHandler** - 进程间通信处理
-
-### 渲染进程模块化
-- **ApiManager** - WxPusher API 调用封装
-- **WebSocketManager** - WebSocket 连接管理
-- **MessageManager** - 消息处理与显示
-- **NotificationManager** - 通知与音效管理
-- **UIManager** - 界面状态管理
-- **LoginManager** - 登录流程控制
-
----
-
 ##  运行环境
 
 - **Node.js** 18+ 
