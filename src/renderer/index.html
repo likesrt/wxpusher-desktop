@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WxPusher 微信推送</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- <div class="header">
+        <h1>WxPusher 微信推送</h1>
+        <p>实时消息推送服务</p>
+    </div> -->
+        <div class="tabs">
+            <button class="tab-btn active" id="tab_settings_btn">设置</button>
+            <button class="tab-btn" id="tab_messages_btn">消息</button>
+        </div>
+        <div id="wxpusher_alert" class="alert" style="display: none;"></div>
+        <div class="tab-content active" id="tab_settings">
+            <div class="status-section">
+                <div class="status-item">
+                    <span class="status-label">连接状态</span>
+                    <span id="wxpusher_ws_status" class="status-value status-error">未连接</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">登录状态</span>
+                    <span id="wxpusher_user_status" class="status-value status-error">未登录</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">设备平台</span>
+                    <span class="status-value">Chrome-Windows</span>
+                </div>
+            </div>
+            <div id="wxpusher_qrcode_section" class="qrcode-section">
+                <h3>微信扫码登录</h3>
+                <div class="qrcode-container">
+                    <img id="wxpusher_qrcode" width="160" height="160" alt="登录二维码">
+                </div>
+                <p>打开微信扫描上方二维码完成绑定</p>
+            </div>
+            <div class="settings-section">
+                <div class="setting-item">
+                    <span>声音提醒</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="wxpusher_sound_toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span>桌面通知</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="wxpusher_notification_toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="tab_messages">
+            <div class="message-section">
+                <h3>最新消息</h3>
+                <div class="message-list" id="wxpusher_message_list">
+                    <div style="text-align: center; color: #666; padding: 20px;"> 等待消息推送... </div>
+                </div>
+            </div>
+            <div class="message-history-section">
+                <h3>历史消息（近七天）</h3>
+                <div class="message-list" id="wxpusher_history_message_list">
+                    <div style="text-align: center; color: #666; padding: 20px;"> 加载中... </div>
+                </div>
+                <button class="load-more-btn" id="wxpusher_load_more_btn" style="display:none;">加载更多</button>
+            </div>
+        </div>
+        <div class="footer">
+            <p>
+                <a href="https://wxpusher.zjiecode.com/" target="_blank">官方网站</a> | <a
+                    href="https://wxpusher.zjiecode.com/docs/" target="_blank">使用文档</a>
+            </p>
+        </div>
+    </div>
+    <audio id="wxpusher_notification_sound" preload="auto">
+        <source src="../assets/sounds/breeze.mp3" type="audio/mpeg">
+    </audio>
+    <script src="scripts/app.js"></script>
+</body>
+
+</html>

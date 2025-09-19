@@ -1,0 +1,295 @@
+/* WxPusher Desktop Application Styles */
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f9fc;
+    color: #333;
+    line-height: 1.6;
+}
+
+button {
+    border: none;
+    background: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.container {
+    max-width: 850px;
+    margin: 30px auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.header {
+    background: linear-gradient(135deg, #4c6ef5, #15aabf);
+    color: #ffffff;
+    text-align: center;
+    padding: 25px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2rem;
+    letter-spacing: 1px;
+}
+
+.header p {
+    margin-top: 8px;
+    opacity: 0.9;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #f1f3f5;
+    font-size: 0.9rem;
+}
+
+.footer a {
+    color: #4c6ef5;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer a:hover {
+    color: #364fc7;
+}
+
+.tabs {
+    display: flex;
+    background-color: #edf2ff;
+}
+
+.tab-btn {
+    flex-grow: 1;
+    padding: 15px;
+    text-align: center;
+    font-weight: 600;
+    color: #495057;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tab-btn.active,
+.tab-btn:hover {
+    background-color: #4c6ef5;
+    color: #ffffff;
+}
+
+.tab-content {
+    padding: 25px;
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.status-section {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.status-item {
+    text-align: center;
+    margin: 10px;
+}
+
+.status-label {
+    color: #868e96;
+}
+
+.status-value {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.status-success {
+    color: #37b24d;
+}
+
+.status-error {
+    color: #f03e3e;
+}
+
+.qrcode-section {
+    text-align: center;
+    padding: 20px;
+    border-top: 1px dashed #dee2e6;
+    display: none;
+}
+
+.qrcode-section.show {
+    display: block;
+}
+
+.qrcode-container img {
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.settings-section {
+    margin-top: 20px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 52px;
+    height: 28px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ced4da;
+    transition: 0.4s;
+    border-radius: 28px;
+}
+
+.slider:before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #fff;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #4c6ef5;
+}
+
+input:checked+.slider:before {
+    transform: translateX(24px);
+}
+
+.message-section,
+.message-history-section {
+    margin-top: 15px;
+}
+
+.message-list {
+    margin-top: 10px;
+}
+
+.message-item {
+    padding: 12px;
+    border-bottom: 1px solid #f1f3f5;
+    transition: background-color 0.3s;
+}
+
+.message-item:hover {
+    background-color: #f8f9fa;
+}
+
+.message-time {
+    font-size: 0.85rem;
+    color: #adb5bd;
+}
+
+.message-content {
+    margin-top: 5px;
+}
+
+.message-item a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+}
+
+.load-more-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background-color: #e7f5ff;
+    color: #495057;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+}
+
+.load-more-btn:hover {
+    background-color: #d0ebff;
+}
+
+.alert {
+    padding: 12px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.alert-success {
+    background-color: #d3f9d8;
+    color: #2b8a3e;
+}
+
+.alert-danger {
+    background-color: #ffe3e3;
+    color: #c92a2a;
+}
+
+.alert-warning {
+    background-color: #fff3bf;
+    color: #e67700;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        margin: 10px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .header,
+    .footer,
+    .tab-btn {
+        padding: 15px;
+    }
+
+    .header h1 {
+        font-size: 1.6rem;
+    }
+
+    .status-item {
+        width: 45%;
+    }
+
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .toggle-switch {
+        margin-top: 8px;
+    }
+}
