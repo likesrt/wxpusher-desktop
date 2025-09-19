@@ -54,11 +54,9 @@ jobs:
           draft: false
           prerelease: false
           body: |
+            **自动构建发布**
             WxPusher Desktop v${{ steps.package_version.outputs.version }}
             
-            **自动构建发布**
-            
-            构建时间: ${{ steps.package_version.outputs.version }}
             
           files: |
             dist/*.exe
