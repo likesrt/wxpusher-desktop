@@ -65,9 +65,7 @@ jobs:
         shell: pwsh
 
       - name: Build application
-        run: yarn run dist
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn run dist --publish=never
 
       - name: Verify build output
         run: |
