@@ -143,7 +143,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/*Setup*.exe
-            dist/latest.yml
+            dist/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
