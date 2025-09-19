@@ -116,58 +116,23 @@ jobs:
       - name: Generate changelog
         id: changelog
         run: |
-          echo "## 🚀 功能更新" > CHANGELOG.md
+          echo "## 更新内容" > CHANGELOG.md
           echo "" >> CHANGELOG.md
           
-          # 获取当前和上一个标签
-          CURRENT_TAG="v${{ steps.package_version.outputs.version }}"
           PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
           
           if [ -n "$PREVIOUS_TAG" ]; then
-            echo "📝 **版本变更**: $PREVIOUS_TAG → $CURRENT_TAG" >> CHANGELOG.md
-            echo "" >> CHANGELOG.md
-            
-            # 获取提交信息并分类
-            echo "### ✨ 新增功能" >> CHANGELOG.md
-            git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD | grep -E "^- (feat|add|新增)" >> CHANGELOG.md || echo "- 无新增功能" >> CHANGELOG.md
-            echo "" >> CHANGELOG.md
-            
-            echo "### 🐛 问题修复" >> CHANGELOG.md  
-            git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD | grep -E "^- (fix|修复|bugfix)" >> CHANGELOG.md || echo "- 无问题修复" >> CHANGELOG.md
-            echo "" >> CHANGELOG.md
-            
-            echo "### 🔧 优化改进" >> CHANGELOG.md
-            git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD | grep -E "^- (refactor|优化|improve|update|ci)" >> CHANGELOG.md || echo "- 无优化改进" >> CHANGELOG.md
-            echo "" >> CHANGELOG.md
-            
-            echo "### 📚 其他变更" >> CHANGELOG.md
-            git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD | grep -vE "^- (feat|add|新增|fix|修复|bugfix|refactor|优化|improve|update|ci)" >> CHANGELOG.md || echo "- 无其他变更" >> CHANGELOG.md
+            git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD >> CHANGELOG.md
           else
-            echo "🎉 **首次发布版本**" >> CHANGELOG.md
-            echo "" >> CHANGELOG.md
-            echo "### ✨ 主要功能" >> CHANGELOG.md
-            echo "- WxPusher 消息推送桌面客户端" >> CHANGELOG.md
-            echo "- 支持微信扫码登录" >> CHANGELOG.md  
-            echo "- 实时消息接收和通知" >> CHANGELOG.md
-            echo "- 系统托盘集成" >> CHANGELOG.md
-            echo "- 开机自启动功能" >> CHANGELOG.md
+            echo "- 首次发布：WxPusher 桌面推送客户端" >> CHANGELOG.md
+            echo "- 支持微信扫码登录和实时消息推送" >> CHANGELOG.md
+            echo "- 系统托盘集成，支持开机自启" >> CHANGELOG.md
           fi
           
           echo "" >> CHANGELOG.md
-          echo "## 📦 下载文件" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "| 文件类型 | 文件名 | 说明 |" >> CHANGELOG.md
-          echo "|---------|--------|------|" >> CHANGELOG.md
-          echo "| 🔧 安装版 | \`WxPusher-Desktop Setup ${{ steps.package_version.outputs.version }}.exe\` | 推荐使用，自动安装到系统 |" >> CHANGELOG.md
-          echo "| 📱 便携版 | \`WxPusher-Desktop ${{ steps.package_version.outputs.version }}.exe\` | 免安装，解压即用 |" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "## 🔧 系统要求" >> CHANGELOG.md
-          echo "- Windows 10 或更高版本" >> CHANGELOG.md
-          echo "- 64 位系统架构" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "## 📞 技术支持" >> CHANGELOG.md
-          echo "- 遇到问题请在 [Issues](https://github.com/likesrt/wxpusher-desktop/issues) 页面反馈" >> CHANGELOG.md
-          echo "- WxPusher 官网：[https://wxpusher.zjiecode.com](https://wxpusher.zjiecode.com)" >> CHANGELOG.md
+          echo "## 下载说明" >> CHANGELOG.md
+          echo "- **安装版**: WxPusher-Desktop Setup xxx.exe (推荐)" >> CHANGELOG.md
+          echo "- **便携版**: WxPusher-Desktop xxx.exe (免安装)" >> CHANGELOG.md
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -178,8 +143,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/*.exe
-            dist/*.zip
-          generate_release_notes: true
+            dist/*Setup*.exe
+            dist/latest.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
