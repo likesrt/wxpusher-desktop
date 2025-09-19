@@ -143,6 +143,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/*.exe
+            dist/*Setup*.exe
+            dist/*-${{ steps.package_version.outputs.version }}.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
